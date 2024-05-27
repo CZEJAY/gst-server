@@ -1,0 +1,13 @@
+# access_token - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MWE1NWQ3NjlmNjRhMmYzYjExZDNkYiIsImlhdCI6MTcxMzAwMTk0NH0.UtQvQgdyxSaE9dcbCyHfD4AFJ8ua35FsjjGT0yIj7DA
+
+
+# POST http://localhost:3000/api/signup
+# Content-Type: application/json
+
+# {
+#     "fullname": "Caleb Jimmy",
+#     "email": "funnn@gmail.com",
+#     "password": "Caleb123"
+# }
+
+GET  http://localhost:3000/api/trending-blogs
