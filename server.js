@@ -11,7 +11,7 @@ import bodyParser from "body-parser"
 
 
 const server = express();
-let PORT = 3000;
+const  PORT = process.env.PORT || 3000;
 
 server.use(morgan("dev"))
 server.use(express.json({ limit: '50mb'}));
