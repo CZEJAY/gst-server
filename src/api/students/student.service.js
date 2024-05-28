@@ -65,7 +65,7 @@ class StudentService {
           { email },
           { phone },
           { matricNumber },
-        ].filter(Boolean), // Filter out undefined fields
+        ],
       });
   
       if (existingStudent) {

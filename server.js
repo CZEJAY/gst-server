@@ -21,13 +21,6 @@ server.use(cors());
 /** POST: http://localhost:8080/uploads  */
 server.use("/api/", router)
 
-const generateUserName = async (email) => {
-  let username = email.split("@")[0];
-  let user = await User.exists({ "personal_info.username": username });
-  user ? (username += nanoid()) : "";
-  return username;
-};
-
 const formatDataToSend = (user) => {
   const access_token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   return {
