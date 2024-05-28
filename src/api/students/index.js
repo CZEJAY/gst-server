@@ -18,22 +18,9 @@ router.post("", async function (req, res) {
   }
 });
 
-router.post("/check", async (req, res) => {
-  const data = await req.body;
-  try {
-    const SSV = new StudentService(data)
-    const result = await SSV.checkStudentExistence()
-    if(result){
-      res.status(200).json({ message: "Student exists", result });
-    }
-  } catch(error) {
-    console.log(error);
-    if(error instanceof ValidationError){
-      return res.status(404).json({ msg: error.message });
-    } else {
-      return res.json("Something went wrong.")
-    }
-  }
-})
+
+
+
+
 
 export default router;

@@ -24,6 +24,7 @@ const studentSchema = new Schema({
         required: [true, 'Email is required'],
         lowercase: true,
         unique: true,
+        index: true,
         match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address'],
     },
     gender: {
@@ -32,6 +33,8 @@ const studentSchema = new Schema({
     },
     phone: {
         type: String,
+        index: true,
+        unique: true,
         required: [true, 'Phone number is required']
     },
     faculty: {
@@ -52,6 +55,8 @@ const studentSchema = new Schema({
     },
     matricNumber: {
         type: String,
+        index: true,
+        unique: true,
         required: [true, 'Matric number is required']
     },
     image: {

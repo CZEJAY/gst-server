@@ -52,24 +52,87 @@ class StudentService {
     }
   }
 
-  // CHECK IF A STUDENT WITH UNIQUES FIELDS ALREADY EXIST
   async checkStudentExistence() {
     try {
       const { email, phone, matricNumber } = this.data;
+  
+      if (!email && !phone && !matricNumber) {
+        throw new ValidationError("At least one of email, phone, or matric number must be provided.");
+      }
+  
+      const existingStudent = await Student.findOne({
+        $or: [
+          { email },
+          { phone },
+          { matricNumber },
+        ].filter(Boolean), // Filter out undefined fields
+      });
+  
+      if (existingStudent) {
+        throw new ValidationError("Student already exists with provided email, phone, or matric number.");
+      }
+  
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.log(`Validation error: ${error.message}`);
+        throw error;
+      } else {
+        console.log(`Internal server error: ${error.message}`);
+        throw new Error('Internal server error');
+      }
+    }
+  }
+  
+  // CHECK IF A STUDENT WITH UNIQUES FIELDS ALREADY EXIST
+  async checkEmail() {
+    try {
+      const { email, } = this.data;
       
-      const [existingEmail, existingPhone, existingMatricNumber] = await Promise.all([
-        email ? Student.findOne({ email }) : null,
-        phone ? Student.findOne({ phone }) : null,
-        matricNumber ? Student.findOne({ matricNumber }) : null
-      ]);
+      const existingEmail = await Student.findOne({ email }) 
   
       if (existingEmail) {
         throw new ValidationError("Email already exists");
-      } else if (existingPhone) {
-        throw new ValidationError("Phone number already exists");
-      } else if (existingMatricNumber) {
-        throw new ValidationError("Matric number already exists");
       }
+  
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.log(`Validation error: ${error.message}`);
+        throw error; // Re-throw the validation error to be handled by the frontend
+      } else {
+        console.log(`Internal server error: ${error.message}`);
+        throw new Error('Internal server error'); // Throw a generic error to avoid exposing internal details
+      }
+    }
+  }
+  async checkPhone() {
+    try {
+      const { phone } = this.data;
+      
+      const existingPhone = await Student.findOne({ phone }) 
+  
+      if (existingPhone) {
+        throw new ValidationError("Phone number already exists");
+      } 
+  
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.log(`Validation error: ${error.message}`);
+        throw error; // Re-throw the validation error to be handled by the frontend
+      } else {
+        console.log(`Internal server error: ${error.message}`);
+        throw new Error('Internal server error'); // Throw a generic error to avoid exposing internal details
+      }
+    }
+  }
+  async checkMatricNumber() {
+    try {
+      const { matricNumber } = this.data;
+      
+      const existingMatricNumber = await Student.findOne({ matricNumber }) 
+  
+      if (existingMatricNumber) {
+        throw new ValidationError("Matric number already exists");
+      } 
   
     } catch (error) {
       if (error instanceof ValidationError) {
