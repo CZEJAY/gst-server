@@ -30,9 +30,9 @@ export class StudentController {
     const data = await req.body;
     // console.log("LINE 28: ", data)
     try {
-     const result = await StudentService.checkStudentExistence(data);
-     if(result){
-        res.json("Student data is checked.")
+     const {message} = await StudentService.checkStudentExistence(data);
+     if(message){
+        res.json({msg:message})
      }
     } catch (error) {
       console.log(error);

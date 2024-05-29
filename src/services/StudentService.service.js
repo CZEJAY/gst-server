@@ -56,22 +56,24 @@ export class StudentService {
   static async checkStudentExistence(data) {
     try {
       const { email, phone, matricNumber } = data;
-
+  
       if (!email && !phone && !matricNumber) {
         throw new ValidationError(
           "At least one of email, phone, or matric number must be provided."
         );
       }
-      const existingStudent = await Student.findOne({
-        $or: [{ email }, { phone }, { matricNumber }],
-      });
-
+  
+      const query = { $or : [{ email }, { phone }, { matricNumber }] };
+      const existingStudent = await Student.findOne(query);
       if (existingStudent) {
         throw new ValidationError(
           "Student already exists with provided email, phone, or matric number."
         );
       }
-      return existingStudent;
+  
+      return {
+        message: "Student does not exist",
+      };
     } catch (error) {
       if (error instanceof ValidationError) {
         console.log(`Validation error: ${error.message}`);
@@ -82,6 +84,7 @@ export class StudentService {
       }
     }
   }
+  
 
   // CHECK IF A STUDENT WITH UNIQUES FIELDS ALREADY EXIST
   static async checkEmail(data) {
