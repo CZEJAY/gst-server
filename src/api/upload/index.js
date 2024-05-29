@@ -2,7 +2,7 @@ import "dotenv/config";
 import { Router } from "express";
 import { upload } from "../../middleware/multer.js";
 import cld from "../../utils/cloudinary.js";
-import Fingerprint from "../../../Schema/Fingerprint.js";
+import Fingerprint from "../../Schema/Fingerprint.js";
 
 
 /**

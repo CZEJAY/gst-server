@@ -1,5 +1,6 @@
 import "dotenv/config";
 import mongoose from "mongoose"
+mongoose.set({ strictQuery: false, strictPopulate: false })
 
 let conn
 
@@ -14,21 +15,18 @@ export const connectToDatabase = async () => {
   const mongoURI = process.env.DATABASE_URL;
 
   try {
-    // Connect to MongoDB
-    console.log("Connecting to MongoDB...");
+    const conn = mongoose.connection
 
-    conn = mongoose.connect(mongoURI);
-
-    conn.then(() => {
-      console.log("Connected to MongoDB");
+    conn.once("connected", () => {
+      console.log("MongoDB Connected")
     })
-    // Event listeners
-    // conn.on("error", (error) => console.error(error));
-    // conn.once("open", () => {
-    //   console.log("Connected to MongoDB");
-    // });
-    // conn.on("disconnected", () => console.log("Disconnected from Database"));
-    // conn.on("reconnected", () => console.log("Reconnected to Database"));
+    conn.once("disconnected", () => {
+      console.log("Disconnected from mongoDB")
+    })
+    return mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   } catch (error) {
     console.error("Error connecting to the database:", error);
   }
