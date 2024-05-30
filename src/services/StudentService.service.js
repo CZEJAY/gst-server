@@ -15,21 +15,28 @@ export class ValidationError extends Error {
 export class StudentService {
   constructor() {}
 
-  static async create(data) {
+  static async create(data, rUserId) {
     try {
       const existingEmail = await Student.findOne({ email: data.email });
+      if (!rUserId) {
+        throw new ValidationError("Registrar user id is required");
+      }
       if (existingEmail) {
-        throw new Error("Email already exists");
+        throw new ValidationError("Email already exists");
       }
       const existingPhone = await Student.findOne({ phone: data.phone });
       if (existingPhone) {
-        throw new Error("Phone number already exists");
+        throw new ValidationError("Phone number already exists");
       }
       const existingMatricNumber = await Student.findOne({
-        matricNumber: this.data.matricNumber,
+        matricNumber: data.matricNumber,
       });
       if (existingMatricNumber) {
-        throw new Error("Matric number already exists");
+        throw new ValidationError("Matric number already exists");
+      }
+      const registrar = await Registrar.findById(rUserId);
+      if (!registrar) {
+        throw new ValidationError("Registrar user not found");
       }
       const hashedPassword = await hashPassword({
         password: data.password,
@@ -38,39 +45,47 @@ export class StudentService {
         ...data,
         password: hashedPassword,
         fingerPrint: data.fingerPrintId,
+        registrar: registrar._id,
       });
-      const fingerPrintUpdate = await Fingerprint.findOneAndUpdate(
+      await Fingerprint.findOneAndUpdate(
         {
           _id: data.fingerPrintId,
         },
         { $set: { studentId: student._id } }
       );
+      await registrar.students.push(student._id);
+      registrar.save();
       student.save();
       return student;
     } catch (error) {
-      console.log(error);
-      throw error;
+      if (error instanceof ValidationError) {
+        console.log(`Validation error: ${error.message}`);
+        throw error;
+      } else {
+        console.log(`Internal server error: ${error.message}`);
+        throw new Error("Internal server error");
+      }
     }
   }
 
   static async checkStudentExistence(data) {
     try {
       const { email, phone, matricNumber } = data;
-  
+
       if (!email && !phone && !matricNumber) {
         throw new ValidationError(
           "At least one of email, phone, or matric number must be provided."
         );
       }
-  
-      const query = { $or : [{ email }, { phone }, { matricNumber }] };
+
+      const query = { $or: [{ email }, { phone }, { matricNumber }] };
       const existingStudent = await Student.findOne(query);
       if (existingStudent) {
         throw new ValidationError(
           "Student already exists with provided email, phone, or matric number."
         );
       }
-  
+
       return {
         message: "Student does not exist",
       };
@@ -84,7 +99,6 @@ export class StudentService {
       }
     }
   }
-  
 
   // CHECK IF A STUDENT WITH UNIQUES FIELDS ALREADY EXIST
   static async checkEmail(data) {
@@ -96,7 +110,9 @@ export class StudentService {
       if (existingEmail) {
         throw new ValidationError("Email already exists");
       }
-      return existingEmail;
+      return {
+        message: "Email is available",
+      };
     } catch (error) {
       if (error instanceof ValidationError) {
         console.log(`Validation error: ${error.message}`);
@@ -131,12 +147,12 @@ export class StudentService {
     try {
       const { matricNumber } = data;
       const existingMatricNumber = await Student.findOne({ matricNumber });
-      console.log(existingMatricNumber)
-      if(existingMatricNumber){
+      console.log(existingMatricNumber);
+      if (existingMatricNumber) {
         throw new ValidationError("Matric number already exists");
       }
       return {
-        message: "Matric number is available"
+        message: "Matric number is available",
       };
     } catch (error) {
       if (error instanceof ValidationError) {

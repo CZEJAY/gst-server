@@ -12,7 +12,7 @@ export class StudentController {
   static async createStudent(req, res) {
     const data = await req.body;
     try {
-      const result = await StudentService.create(data);
+      const result = await StudentService.create(data, req.user);
       if (result) {
         res
           .status(201)
@@ -47,7 +47,10 @@ export class StudentController {
   static async checkEmail(req, res) {
     const data = await req.body;
     try {
-      await StudentService.checkEmail(data);
+     const {message} = await StudentService.checkEmail(data);
+     if(message){
+        res.json({msg:message})
+     }
     } catch (error) {
       console.log(error);
       if (error instanceof ValidationError) {

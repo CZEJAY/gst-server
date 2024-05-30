@@ -1,11 +1,11 @@
 import express from "express";
 import uploadRouter from "../api/upload/index.js";
 import { StudentController } from "../controller/studentController.js";
-
+import { verifyJWT } from "../middleware/verifyJWT.js"
 const rootRouter = express.Router();
 
 rootRouter.use("/upload", uploadRouter);
-rootRouter.post("/register", StudentController.createStudent);
+rootRouter.post("/register", verifyJWT, StudentController.createStudent);
 rootRouter.post("/signin", StudentController.signin);
 rootRouter.post("/signup", StudentController.signup);
 

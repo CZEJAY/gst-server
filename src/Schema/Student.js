@@ -70,6 +70,10 @@ const studentSchema = new Schema({
     fingerPrint: {
         type: mongoose.Types.ObjectId,
         ref: "fingerPrints"
+    },
+    registrar: {
+        type: mongoose.Types.ObjectId,
+        ref: "Registrar"
     }
 }, { 
     timestamps: true // This automatically handles createdAt and updatedAt fields
