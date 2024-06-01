@@ -56,7 +56,7 @@ export class StudentController {
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
-        return res.json("Something went wrong.");
+        return res.status(500).json("Something went wrong.");
       }
     }
   }
@@ -81,7 +81,10 @@ export class StudentController {
   static async checkPhone(req, res) {
     const data = await req.body;
     try {
-      await StudentService.checkPhone(data);
+      const {message} = await StudentService.checkPhone(data);
+      if(message){
+        res.json({msg:message})
+      }
     } catch (error) {
       console.log(error);
       if (error instanceof ValidationError) {
@@ -97,7 +100,6 @@ export class StudentController {
       const user = await StudentService.signin(data);
       if (user) {
         res.json({ data: formatDataToSend(user) });
-        console.log(user);
       }
     } catch (error) {
       console.log(error);

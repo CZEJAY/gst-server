@@ -132,7 +132,9 @@ export class StudentService {
       if (existingPhone) {
         throw new ValidationError("Phone number already exists");
       }
-      return existingPhone;
+      return {
+        message: "Phone number is available",
+      };
     } catch (error) {
       if (error instanceof ValidationError) {
         console.log(`Validation error: ${error.message}`);
