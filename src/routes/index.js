@@ -8,6 +8,7 @@ rootRouter.use("/upload", uploadRouter);
 rootRouter.post("/register", verifyJWT, StudentController.createStudent);
 rootRouter.post("/signin", StudentController.signin);
 rootRouter.post("/signup", StudentController.signup);
+rootRouter.post("/verify/fingerPrint", StudentController.verifyFingerPrint);
 
 rootRouter.post("/check", StudentController.check);
 rootRouter.post("/checkEmail", StudentController.checkEmail);

@@ -35,15 +35,10 @@ router.post("", async function (req, res) {
 router.post("/fingerPrint", async function (req, res) {
     const data = await req.body
     try{
-    const result = await cld.cloudinary.uploader.upload(data.imageURL, function (err, result){
-        if(err) {
-          console.log("err LINE 40: ", err);
-        }
-        return result
-    })
-    if(result){
+    if(data.imageURL){
       const fingerModel = new Fingerprint({
-        template: result.secure_url
+        template: data.imageURL,
+        sample: data.sample
       })
       fingerModel.save()
       return res.json({message: "Fingerprint registered", data: fingerModel})

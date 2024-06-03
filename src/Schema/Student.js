@@ -19,23 +19,9 @@ const studentSchema = new Schema({
         required: [true, 'Other name is required'],
         minlength: [3, 'Other name must be at least 3 characters long'],
     },
-    email: {
-        type: String,
-        required: [true, 'Email is required'],
-        lowercase: true,
-        unique: true,
-        index: true,
-        match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address'],
-    },
     gender: {
         type: String,
         required: [true, 'Gender is required']
-    },
-    phone: {
-        type: String,
-        index: true,
-        unique: true,
-        required: [true, 'Phone number is required']
     },
     faculty: {
         type: String,
@@ -49,10 +35,6 @@ const studentSchema = new Schema({
         type: String,
         required: [true, 'Level is required']
     },
-    courses: {
-        type: [String],
-        required: [true, 'Courses are required']
-    },
     matricNumber: {
         type: String,
         index: true,
@@ -62,10 +44,6 @@ const studentSchema = new Schema({
     image: {
         type: String,
         required: [true, 'Image URL is required']
-    },
-    password: {
-        type: String,
-        required: [true, 'Password is required']
     },
     fingerPrint: {
         type: mongoose.Types.ObjectId,

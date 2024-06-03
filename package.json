@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@digitalpersona/authentication": "^0.2.6",
+    "@ntlab/dplib": "^1.2.1",
     "aws-sdk": "^2.1432.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.1.0",

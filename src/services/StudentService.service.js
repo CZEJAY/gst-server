@@ -2,6 +2,7 @@ import Fingerprint from "../Schema/Fingerprint.js";
 import Registrar from "../Schema/Registrar.js";
 import Student from "../Schema/Student.js";
 import { connectToDatabase } from "../db/index.js";
+import { MatchFingerPrint } from "../utils/FingerPrintMatcher.js";
 import { hashPassword } from "../utils/index.js";
 import bcrypt from "bcrypt";
 
@@ -17,17 +18,7 @@ export class StudentService {
 
   static async create(data, rUserId) {
     try {
-      const existingEmail = await Student.findOne({ email: data.email });
-      if (!rUserId) {
-        throw new ValidationError("Registrar user id is required");
-      }
-      if (existingEmail) {
-        throw new ValidationError("Email already exists");
-      }
-      const existingPhone = await Student.findOne({ phone: data.phone });
-      if (existingPhone) {
-        throw new ValidationError("Phone number already exists");
-      }
+      
       const existingMatricNumber = await Student.findOne({
         matricNumber: data.matricNumber,
       });
@@ -38,12 +29,9 @@ export class StudentService {
       if (!registrar) {
         throw new ValidationError("Registrar user not found");
       }
-      const hashedPassword = await hashPassword({
-        password: data.password,
-      });
+      
       const student = new Student({
         ...data,
-        password: hashedPassword,
         fingerPrint: data.fingerPrintId,
         registrar: registrar._id,
       });
@@ -70,19 +58,18 @@ export class StudentService {
 
   static async checkStudentExistence(data) {
     try {
-      const { email, phone, matricNumber } = data;
+      const { matricNumber } = data;
 
-      if (!email && !phone && !matricNumber) {
+      if (!matricNumber) {
         throw new ValidationError(
-          "At least one of email, phone, or matric number must be provided."
+          "Matric number must be provided."
         );
       }
 
-      const query = { $or: [{ email }, { phone }, { matricNumber }] };
-      const existingStudent = await Student.findOne(query);
+      const existingStudent = await Student.findOne({matricNumber});
       if (existingStudent) {
         throw new ValidationError(
-          "Student already exists with provided email, phone, or matric number."
+          "Student already exists with provided matric number."
         );
       }
 
@@ -224,6 +211,38 @@ export class StudentService {
         throw error; // Re-throw the validation error to be handled by the frontend
       } else {
         console.log(`Internal server error: ${error.message}`);
+        throw new Error("Internal server error"); // Throw a generic error to avoid exposing internal details
+      }
+    }
+  }
+  static async verifyFingerPrint(data) {
+    const { sample } = data;
+    try {
+      if (!sample) {
+        throw new ValidationError("Fingerprint data is required.");
+      }
+
+      const fingerPrints = await Fingerprint.find({}).populate("studentId")
+      
+      let matchedStudent = null;
+
+      for (let fingerprint of fingerPrints) {
+          const isMatch = await MatchFingerPrint([sample, fingerprint.sample]);
+          if (isMatch) {
+              matchedStudent = fingerprint;
+              break;
+          }
+      }
+      if (!matchedStudent) {
+        throw new ValidationError("No matching fingerprint found.");
+        }
+        return {matchedStudent};
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        console.log(`Validation error: ${error.message}`);
+        throw error; // Re-throw the validation error to be handled by the frontend
+      } else {
+        console.log(`Internal server error: ${error}`);
         throw new Error("Internal server error"); // Throw a generic error to avoid exposing internal details
       }
     }

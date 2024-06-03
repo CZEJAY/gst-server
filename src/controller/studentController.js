@@ -35,7 +35,7 @@ export class StudentController {
         res.json({msg:message})
      }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
@@ -52,7 +52,7 @@ export class StudentController {
         res.json({msg:message})
      }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
@@ -69,7 +69,7 @@ export class StudentController {
         return res.json({ msg: message });
       } 
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
@@ -86,7 +86,7 @@ export class StudentController {
         res.json({msg:message})
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
@@ -102,7 +102,7 @@ export class StudentController {
         res.json({ data: formatDataToSend(user) });
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
@@ -120,7 +120,25 @@ export class StudentController {
         console.log(user);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      if (error instanceof ValidationError) {
+        return res.status(404).json({ msg: error.message });
+      } else {
+        return res.status(500).json("Something went wrong.");
+      }
+    }
+  }
+  static async verifyFingerPrint(req, res) {
+    const data = await req.body;
+    try {
+      const {matchedStudent} = await StudentService.verifyFingerPrint(data);
+      if (matchedStudent) {
+        res.json({ student: matchedStudent });
+    } else {
+        res.status(404).json({ err: 'No matching fingerprint found' });
+    }
+    } catch (error) {
+      console.log(error.message);
       if (error instanceof ValidationError) {
         return res.status(404).json({ msg: error.message });
       } else {
