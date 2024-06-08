@@ -32,15 +32,8 @@ export class StudentService {
       
       const student = new Student({
         ...data,
-        fingerPrint: data.fingerPrintId,
         registrar: registrar._id,
       });
-      await Fingerprint.findOneAndUpdate(
-        {
-          _id: data.fingerPrintId,
-        },
-        { $set: { studentId: student._id } }
-      );
       await registrar.students.push(student._id);
       registrar.save();
       student.save();
