@@ -35,6 +35,10 @@ const studentSchema = new Schema({
         type: String,
         required: [true, 'Level is required']
     },
+    phone: {
+        type: String,
+        required: [true, 'phone is required']
+    },
     matricNumber: {
         type: String,
         index: true,
