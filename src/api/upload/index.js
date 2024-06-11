@@ -18,7 +18,7 @@ const router = Router()
 router.post("", async function (req, res) {
     const data = await req.body
     try{
-    const result = await cld.cloudinary.uploader.upload(data.imageURL, function (err, result){
+    const result = await cld.cloudinary.uploader.upload(data.imageURL, {folder: "gst"}, function (err, result){
         if(err) {
           console.log(err);
         }

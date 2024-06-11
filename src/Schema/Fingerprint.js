@@ -6,14 +6,6 @@ const fingerPrints = mongoose.Schema(
       type: String,
       required: [true, "Template url is required"],
     },
-    sample: {
-      type: String,
-      required: [true, "Sample url is required"],
-    },
-    studentId: {
-      type: mongoose.Types.ObjectId,
-      ref: "Student"
-    },
   },
   {
     timestamps: true,
